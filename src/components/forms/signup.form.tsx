@@ -9,8 +9,8 @@ import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 import {
-  SOMETHING_WENT_WRONG,
-  THESE_CREDENTIALS_DO_NOT_MATCH_OUR_RECORDS,
+  SORRY_PLEASE_TRY_AGAIN_LATER,
+  CREDENTIALS_ARE_INVALID,
 } from "@/constants/error.messages";
 import {
   SignupFormFields,
@@ -19,10 +19,14 @@ import {
 import { signUp } from "@/services/auth.service";
 import ConfirmPasswordField from "../inputs/confirm-password.field";
 import UsernameField from "../inputs/username.field";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 interface SignupFormProps {}
 
 const SignupForm: React.FC<SignupFormProps> = ({}) => {
+  const router = useRouter();
+
   const signupForm = useForm<SignupFormFields>({
     resolver: zodResolver(signupSchema),
     mode: "onBlur",
@@ -32,6 +36,7 @@ const SignupForm: React.FC<SignupFormProps> = ({}) => {
     register,
     handleSubmit,
     clearErrors,
+    getValues,
     formState: { errors, isSubmitting },
   } = signupForm;
 
@@ -39,14 +44,21 @@ const SignupForm: React.FC<SignupFormProps> = ({}) => {
     mutationFn: (data: SignupFormFields) => signUp(data),
     onError(error) {
       if (error instanceof AxiosError) {
-        toast.error(
-          error?.response?.data?.message ||
-            THESE_CREDENTIALS_DO_NOT_MATCH_OUR_RECORDS
-        );
+        toast.error(error?.response?.data?.message || CREDENTIALS_ARE_INVALID);
       } else {
         console.error("Login mutation error: ", error);
-        toast.error(SOMETHING_WENT_WRONG);
+        toast.error(SORRY_PLEASE_TRY_AGAIN_LATER);
       }
+    },
+    async onSuccess() {
+      // TODO:
+      // 1. Email verification workflow
+      await signIn("credentials", {
+        email: getValues("email"),
+        password: getValues("password"),
+        redirect: true,
+        callbackUrl: "http://localhost:3000",
+      });
     },
   });
 
@@ -78,7 +90,7 @@ const SignupForm: React.FC<SignupFormProps> = ({}) => {
                 htmlFor="terms-n-conditions"
                 className="ml-3 block cursor-pointer text-sm leading-6 text-gray-600"
               >
-                Terms & Conditions
+                Terms & conditions
               </label>
             </div>
 
@@ -95,7 +107,7 @@ const SignupForm: React.FC<SignupFormProps> = ({}) => {
           <div>
             <button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-gray-800 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 disabled:cursor-not-allowed "
+              className="flex w-full justify-center rounded-md bg-gray-800 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 disabled:cursor-not-allowed"
               disabled={isSubmitting}
             >
               {isSubmitting ? "..." : "Sign up"}

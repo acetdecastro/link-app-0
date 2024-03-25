@@ -1,26 +1,25 @@
 import { FieldError, UseFormRegister } from "react-hook-form";
 import FieldErrorMessage from "../field-error-message";
 
-interface EmailFieldProps {
+interface NameFieldProps {
   error?: FieldError;
   register: UseFormRegister<any>;
 }
 
-const EmailField: React.FC<EmailFieldProps> = ({ error, register }) => {
+const NameField: React.FC<NameFieldProps> = ({ error, register }) => {
   return (
     <div>
       <label
-        htmlFor="email"
+        htmlFor="name"
         className="block text-sm font-medium leading-6 text-gray-900"
       >
-        Email
+        Name
       </label>
       <div className="mt-2">
         <input
-          id="email"
-          type="email"
-          autoComplete="email"
-          placeholder="you@example.com"
+          id="name"
+          type="name"
+          autoComplete="name"
           required
           className={`block w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 shadow-sm ring-1 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6 ${
             error
@@ -28,15 +27,13 @@ const EmailField: React.FC<EmailFieldProps> = ({ error, register }) => {
               : "ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-gray-600"
           }`}
           aria-invalid={error ? "true" : "false"}
-          aria-describedby="email-error"
-          {...register("email")}
+          aria-describedby="name-error"
+          {...register("name")}
         />
-        {error && (
-          <FieldErrorMessage id="email-error" message={error.message} />
-        )}
+        {error && <FieldErrorMessage id="name-error" message={error.message} />}
       </div>
     </div>
   );
 };
 
-export default EmailField;
+export default NameField;

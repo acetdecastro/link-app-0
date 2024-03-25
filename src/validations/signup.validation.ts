@@ -5,12 +5,13 @@ export const signupSchema = z
     email: z
       .string()
       .email({ message: "Please provide a correct email address" }),
+    name: z.string().optional(),
     username: z
       .string()
       .max(40, "Username must be at most 40 characters long")
       .regex(
         /^[a-zA-Z0-9]+$/,
-        "Username must contain only letters and numbers"
+        "Username is required and can only contain letters and numbers"
       ),
     password: z
       .string()

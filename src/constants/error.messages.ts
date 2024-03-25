@@ -1,5 +1,3 @@
-export const SOMETHING_WENT_WRONG =
-  "Sorry, something went wrong. Please try again later.";
+export const SORRY_PLEASE_TRY_AGAIN_LATER = "Sorry, please try again later.";
 
-export const THESE_CREDENTIALS_DO_NOT_MATCH_OUR_RECORDS =
-  "These credentials do not match our records.";
+export const CREDENTIALS_ARE_INVALID = "Credentials are invalid.";
