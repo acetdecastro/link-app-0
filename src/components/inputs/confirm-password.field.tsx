@@ -24,7 +24,7 @@ const ConfirmPasswordField: React.FC<ConfirmPasswordFieldProps> = ({
         htmlFor="confirmPassword"
         className="block text-sm font-medium leading-6 text-gray-900"
       >
-        Confirm Password
+        Confirm password
       </label>
       <div className="relative mt-2">
         <input

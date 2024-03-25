@@ -10,14 +10,18 @@ import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 import {
-  SOMETHING_WENT_WRONG,
-  THESE_CREDENTIALS_DO_NOT_MATCH_OUR_RECORDS,
+  SORRY_PLEASE_TRY_AGAIN_LATER,
+  CREDENTIALS_ARE_INVALID,
 } from "@/constants/error.messages";
 import { logIn } from "@/services/auth.service";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface LoginFormProps {}
 
 const LoginForm: React.FC<LoginFormProps> = ({}) => {
+  const router = useRouter();
+
   const loginForm = useForm<LoginFormFields>({
     resolver: zodResolver(loginSchema),
     mode: "onBlur",
@@ -34,19 +38,34 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
     mutationFn: (data: LoginFormFields) => logIn(data),
     onError(error) {
       if (error instanceof AxiosError) {
-        toast.error(
-          error?.response?.data?.message ||
-            THESE_CREDENTIALS_DO_NOT_MATCH_OUR_RECORDS
-        );
+        toast.error(error?.response?.data?.message || CREDENTIALS_ARE_INVALID);
       } else {
         console.error("Login mutation error: ", error);
-        toast.error(SOMETHING_WENT_WRONG);
+        toast.error(SORRY_PLEASE_TRY_AGAIN_LATER);
       }
     },
   });
 
   const onSubmit: SubmitHandler<LoginFormFields> = async (data) => {
-    mutation.mutate(data);
+    // mutation.mutate(data);
+    const res = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    });
+
+    if (res?.error) {
+      if (res?.error === "CredentialsSignin") {
+        toast.error(CREDENTIALS_ARE_INVALID);
+        return;
+      }
+      toast.error(SORRY_PLEASE_TRY_AGAIN_LATER);
+      return;
+    }
+
+    if (res?.ok) {
+      router.push("/");
+    }
   };
 
   return (
