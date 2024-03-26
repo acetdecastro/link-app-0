@@ -3,15 +3,15 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { LoginFormFields, loginSchema } from "@/validations/login.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import EmailField from "../inputs/email.field";
-import PasswordField from "../inputs/password.field";
-import { Link } from "../link";
+import EmailField from "../../components/inputs/email.field";
+import PasswordField from "../../components/inputs/password.field";
+import { Link } from "../../components/link";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 import {
   SORRY_PLEASE_TRY_AGAIN_LATER,
-  CREDENTIALS_ARE_INVALID,
+  INVALID_CREDENTIALS,
 } from "@/constants/error.messages";
 import { logIn } from "@/services/auth.service";
 import { signIn } from "next-auth/react";
@@ -38,7 +38,7 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
     mutationFn: (data: LoginFormFields) => logIn(data),
     onError(error) {
       if (error instanceof AxiosError) {
-        toast.error(error?.response?.data?.message || CREDENTIALS_ARE_INVALID);
+        toast.error(error?.response?.data?.message || INVALID_CREDENTIALS);
       } else {
         console.error("Login mutation error: ", error);
         toast.error(SORRY_PLEASE_TRY_AGAIN_LATER);
@@ -56,7 +56,7 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
 
     if (res?.error) {
       if (res?.error === "CredentialsSignin") {
-        toast.error(CREDENTIALS_ARE_INVALID);
+        toast.error(INVALID_CREDENTIALS);
         return;
       }
       toast.error(SORRY_PLEASE_TRY_AGAIN_LATER);
@@ -64,7 +64,7 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
     }
 
     if (res?.ok) {
-      router.push("/");
+      router.push("/app/pages");
     }
   };
 

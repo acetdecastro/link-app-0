@@ -6,7 +6,6 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { Link } from "@/components/link";
 import Logo from "@/components/logo";
-import { useSession } from "next-auth/react";
 
 // const navigation = [
 //   { name: "Product", href: "#" },
@@ -17,9 +16,6 @@ import { useSession } from "next-auth/react";
 
 export default function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const session = useSession();
-
-  console.log(session);
 
   return (
     <div className="">

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     default: "SeaLink",
     template: "%s | SeaLink",
   },
-  description: "What are your links?",
+  description: "For your everything marketing",
 };
 
 export default async function RootLayout({
@@ -28,7 +28,7 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <QueryClientProvider>
             {children}
-            <Toaster richColors closeButton position="bottom-center" />
+            <Toaster richColors closeButton position="top-center" />
           </QueryClientProvider>
         </SessionProvider>
       </body>

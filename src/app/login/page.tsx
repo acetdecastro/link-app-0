@@ -1,9 +1,8 @@
 import Logo from "@/components/logo";
-import LoginForm from "@/components/forms/login.form";
+import LoginForm from "@/app/login/login.form";
 
 export const metadata = {
   title: "Log In",
-  description: "Let me see your links!",
 };
 
 export default function LogIn() {

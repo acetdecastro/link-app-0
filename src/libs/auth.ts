@@ -11,8 +11,8 @@ export const {
 } = NextAuth({
   pages: {
     signIn: "/login",
+    error: "/error",
   },
-  secret: process.env.AUTH_SECRET,
   jwt: {
     maxAge: 3600,
   },
@@ -31,15 +31,13 @@ export const {
           const user = {
             id: res.data._id,
             email: res.data.email,
+            name: res.data.name,
+            username: res.data.username,
             token: res.data.token,
           };
 
           return res.data;
         } catch (error) {
-          if (error instanceof AxiosError) {
-            // console.log(error?.response?.data?.message);
-            return null;
-          }
           return null;
         }
       },
@@ -49,24 +47,15 @@ export const {
       },
     }),
   ],
+  secret: process.env.AUTH_SECRET,
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
       return true;
     },
-    // User represents response from OAuth providers
     async jwt({ token, user, trigger }) {
-      // console.log("tokenjwt", token);
-      // console.log("userjwt", user);
-      if (trigger === "signIn") {
-        // console.log(token);
-        // token.
-      }
       return token;
     },
     async session({ session, token, user }) {
-      // console.log("session", session);
-      // console.log("sessionuser", user);
-      // console.log("sessiontoken", token);
       return session;
     },
   },

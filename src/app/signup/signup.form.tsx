@@ -2,31 +2,29 @@
 
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import EmailField from "../inputs/email.field";
-import PasswordField from "../inputs/password.field";
-import { Link } from "../link";
+import EmailField from "../../components/inputs/email.field";
+import PasswordField from "../../components/inputs/password.field";
+import { Link } from "../../components/link";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 import {
   SORRY_PLEASE_TRY_AGAIN_LATER,
-  CREDENTIALS_ARE_INVALID,
+  INVALID_CREDENTIALS,
 } from "@/constants/error.messages";
 import {
   SignupFormFields,
   signupSchema,
 } from "@/validations/signup.validation";
 import { signUp } from "@/services/auth.service";
-import ConfirmPasswordField from "../inputs/confirm-password.field";
-import UsernameField from "../inputs/username.field";
-import { useRouter } from "next/navigation";
+import ConfirmPasswordField from "../../components/inputs/confirm-password.field";
+import UsernameField from "../../components/inputs/username.field";
 import { signIn } from "next-auth/react";
+import NameField from "@/components/inputs/name.field";
 
 interface SignupFormProps {}
 
 const SignupForm: React.FC<SignupFormProps> = ({}) => {
-  const router = useRouter();
-
   const signupForm = useForm<SignupFormFields>({
     resolver: zodResolver(signupSchema),
     mode: "onBlur",
@@ -35,7 +33,6 @@ const SignupForm: React.FC<SignupFormProps> = ({}) => {
   const {
     register,
     handleSubmit,
-    clearErrors,
     getValues,
     formState: { errors, isSubmitting },
   } = signupForm;
@@ -43,12 +40,8 @@ const SignupForm: React.FC<SignupFormProps> = ({}) => {
   const mutation = useMutation({
     mutationFn: (data: SignupFormFields) => signUp(data),
     onError(error) {
-      if (error instanceof AxiosError) {
-        toast.error(error?.response?.data?.message || CREDENTIALS_ARE_INVALID);
-      } else {
-        console.error("Login mutation error: ", error);
-        toast.error(SORRY_PLEASE_TRY_AGAIN_LATER);
-      }
+      console.error("Signup mutation error: ", error);
+      toast.error(SORRY_PLEASE_TRY_AGAIN_LATER);
     },
     async onSuccess() {
       // TODO:
@@ -57,7 +50,7 @@ const SignupForm: React.FC<SignupFormProps> = ({}) => {
         email: getValues("email"),
         password: getValues("password"),
         redirect: true,
-        callbackUrl: "http://localhost:3000",
+        callbackUrl: "http://localhost:3000/app/pages",
       });
     },
   });
@@ -71,6 +64,7 @@ const SignupForm: React.FC<SignupFormProps> = ({}) => {
       <FormProvider {...signupForm}>
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <EmailField error={errors.email} register={register} />
+          <NameField error={errors.name} register={register} />
           <UsernameField error={errors.username} register={register} />
           <PasswordField error={errors.password} register={register} />
           <ConfirmPasswordField

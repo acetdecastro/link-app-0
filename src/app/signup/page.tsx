@@ -1,10 +1,9 @@
 import Logo from "@/components/logo";
-import LoginForm from "@/components/forms/login.form";
-import SignupForm from "@/components/forms/signup.form";
+import LoginForm from "@/app/login/login.form";
+import SignupForm from "@/app/signup/signup.form";
 
 export const metadata = {
   title: "Sign Up",
-  description: "See my links!",
 };
 
 export default function SignUp() {

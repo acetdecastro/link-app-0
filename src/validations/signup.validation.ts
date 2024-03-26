@@ -5,9 +5,13 @@ export const signupSchema = z
     email: z
       .string()
       .email({ message: "Please provide a correct email address" }),
-    name: z.string().optional(),
+    name: z
+      .string()
+      .min(1, "Name is required")
+      .max(40, "Name must be at most 40 characters long"),
     username: z
       .string()
+      .min(1, "Username is required")
       .max(40, "Username must be at most 40 characters long")
       .regex(
         /^[a-zA-Z0-9]+$/,

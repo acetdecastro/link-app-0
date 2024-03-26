@@ -1,4 +1,5 @@
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
-const API_AUTH_URL = `${API_URL}/auth`;
+export const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL; // ie. http://localhost:3000
+export const API_BASE_URL = `${SERVER_URL}/api`;
+export const API_AUTH_URL = `${API_BASE_URL}/auth`;
 
-export { API_URL, API_AUTH_URL };
+export const APP_URL = process.env.NEXT_PUBLIC_APP_URL;

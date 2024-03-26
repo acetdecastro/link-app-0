@@ -1,4 +1,4 @@
-import { API_AUTH_URL, API_URL } from "@/constants/urls";
+import { API_AUTH_URL } from "@/constants/urls";
 import { LoginFormFields } from "@/validations/login.validation";
 import { SignupFormFields } from "@/validations/signup.validation";
 import axios from "axios";
