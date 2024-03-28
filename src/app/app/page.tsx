@@ -1,5 +1,6 @@
 // import { auth } from "@/libs/auth";
 import LogoutButton from "../../components/buttons/logout.button";
+import AppContent from "./components/app.content";
 // import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -15,7 +16,7 @@ export default async function App() {
 
   return (
     <>
-      <h1 className="text-gray-500">I am /app</h1>
+      <AppContent />
     </>
   );
 }
