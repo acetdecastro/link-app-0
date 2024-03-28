@@ -58,7 +58,7 @@ export const {
             emailVerified: res.data.emailVerified,
           };
 
-          console.log("hasura", user);
+          // console.log("hasura", user);
 
           return user;
         } catch (error) {
@@ -100,7 +100,7 @@ export const {
         accessToken: token.accessToken,
       };
 
-      console.log("sestok", session);
+      // console.log("sestok", session);
       return session;
     },
   },

@@ -24,7 +24,7 @@ export default function Landing() {
           className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
           aria-label="Global"
         >
-          <div className="flex lg:flex-1">
+          <div className="flex items-center mt-2 lg:flex-1">
             <Logo />
           </div>
           {!mobileMenuOpen && (

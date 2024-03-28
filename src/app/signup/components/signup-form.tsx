@@ -1,51 +1,40 @@
 "use client";
 
-import { Icons } from "@/components/icons";
-import { Link } from "@/components/link";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-// import { toast } from "@/components/ui/use-toast";
-import { z, ZodType } from "zod";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { logIn, signUp } from "@/services/auth.service";
 import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
 import {
-  INVALID_CREDENTIALS,
   SORRY_PLEASE_TRY_AGAIN_LATER,
+  INVALID_CREDENTIALS,
 } from "@/constants/error.messages";
-import { signIn } from "next-auth/react";
 import {
   SignupFormFields,
   signupSchema,
 } from "@/validations/signup.validation";
+import { signUp } from "@/services/auth.service";
+import { signIn } from "next-auth/react";
+import NameField from "@/components/inputs/name.field";
+import { Link } from "@/components/link";
+import UsernameField from "@/components/inputs/username.field";
+import PasswordField from "@/components/inputs/password.field";
+import EmailField from "@/components/inputs/email.field";
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SignupFormProps {}
 
-export default function SignupForm({ className, ...props }: UserAuthFormProps) {
-  const form = useForm<SignupFormFields>({
+const SignupForm: React.FC<SignupFormProps> = ({}) => {
+  const signupForm = useForm<SignupFormFields>({
     resolver: zodResolver(signupSchema),
     mode: "onBlur",
   });
+
   const {
     register,
     handleSubmit,
     getValues,
-    control,
     formState: { errors, isSubmitting },
-  } = form;
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  } = signupForm;
 
   const mutation = useMutation({
     mutationFn: (data: SignupFormFields) => signUp(data),
@@ -66,102 +55,56 @@ export default function SignupForm({ className, ...props }: UserAuthFormProps) {
   });
 
   const onSubmit: SubmitHandler<SignupFormFields> = async (data) => {
-    console.log(data);
     mutation.mutate(data);
   };
 
   return (
-    <div className="flex items-center justify-center py-12">
-      <div className="mx-auto grid w-[350px] gap-6">
-        <Form {...form}>
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid gap-2 text-left">
-              <h1 className="text-2xl font-bold">Create your account</h1>
-            </div>
-            <div className="grid gap-4">
-              <FormField
-                name="email"
-                // control={control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel
-                      htmlFor="email"
-                      className={`${errors?.email ? "text-gray-900" : ""}`}
-                    >
-                      Email
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="m@example.com"
-                        {...field}
-                      />
-                    </FormControl>
-                    {/* <FormDescription>{errors.email?.message}</FormDescription> */}
-                    <FormMessage className="text-red-600 text-xs font-semibold" />
-                  </FormItem>
-                )}
-              ></FormField>
-              <FormField
-                name="password"
-                // control={control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel
-                      htmlFor="password"
-                      className={`${errors?.password ? "text-gray-900" : ""}`}
-                    >
-                      Password
-                    </FormLabel>
-                    <FormControl>
-                      <Input id="password" type="password" {...field} />
-                    </FormControl>
-                    <FormMessage className="text-red-600 text-xs font-semibold" />
-                  </FormItem>
-                )}
-              ></FormField>
+    <>
+      <FormProvider {...signupForm}>
+        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          <EmailField error={errors.email} register={register} />
+          <UsernameField error={errors.username} register={register} />
+          <PasswordField error={errors.password} register={register} />
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? (
-                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <span>Sign up</span>
-                )}
-              </Button>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <input
+                id="terms-n-conditions"
+                name="terms-n-conditions"
+                type="checkbox"
+                className="h-4 w-4 rounded border-gray-300 text-gray-600 focus:ring-gray-600"
+              />
+              <label
+                htmlFor="terms-n-conditions"
+                className="ml-3 block cursor-pointer text-sm leading-6 text-gray-600"
+              >
+                Terms & conditions
+              </label>
             </div>
-          </form>
-        </Form>
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
+
+            <div className="text-sm leading-6">
+              <Link
+                href="/login"
+                className="font-semibold text-gray-600 hover:text-gray-400"
+              >
+                {`Already have an account?`}
+              </Link>
+            </div>
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground select-none font-semibold">
-              Or sign up with
-            </span>
+
+          <div>
+            <button
+              type="submit"
+              className="flex w-full justify-center rounded-md bg-gray-800 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 disabled:cursor-not-allowed"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "..." : "Sign up"}
+            </button>
           </div>
-        </div>
-        <Button
-          variant="outline"
-          type="button"
-          disabled={true}
-          onClick={() => setIsLoading(!isLoading)}
-        >
-          {isLoading ? (
-            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Icons.google className="mr-2 h-4 w-4" />
-          )}{" "}
-          Google
-        </Button>
-        <div className="mt-4 text-center text-sm">
-          Already have an account?{" "}
-          <Link href="/login" className="underline">
-            Log in
-          </Link>
-        </div>
-      </div>
-    </div>
+        </form>
+      </FormProvider>
+    </>
   );
-}
+};
+
+export default SignupForm;
